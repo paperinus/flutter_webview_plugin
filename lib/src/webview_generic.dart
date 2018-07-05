@@ -89,6 +89,7 @@ class _WebviewGenericState extends State<WebviewGeneric> {
         _resizeTimer?.cancel();
         _resizeTimer = new Timer(new Duration(milliseconds: 300), () {
           // avoid resizing to fast when build is called multiple time
+          _rect = _buildRect(context);
           webviewReference.resize(_rect);
         });
       }

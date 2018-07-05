@@ -50,14 +50,14 @@ class MyApp extends StatelessWidget {
                       child: new LayoutBuilder(builder:
                           (BuildContext context, BoxConstraints constraints) {
                         return new WebviewGeneric(
-                            url: selectedUrl,
-                            withZoom: true,
-                            withLocalStorage: true,
-                            height: constraints.maxHeight,
-                            width: constraints.maxWidth,
-                            rect: getRectForWebView(globalKey),
-                            keyGlobal: globalKey,);
-
+                          url: selectedUrl,
+                          withZoom: true,
+                          withLocalStorage: true,
+                          height: constraints.maxHeight,
+                          width: constraints.maxWidth,
+                          rect: getRectForWebView(globalKey),
+                          keyGlobal: globalKey,
+                        );
                       }),
                       key: keyContainer,
                     ),
@@ -71,14 +71,13 @@ class MyApp extends StatelessWidget {
   }
 }
 
-  Rect getRectForWebView(GlobalKey globalKey) {
-      try{
-        return RectGetter.getRectFromKey(globalKey);
-      }
-      catch(err){
-        return new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);
-      }
+Rect getRectForWebView(GlobalKey globalKey) {
+  try {
+    return RectGetter.getRectFromKey(globalKey);
+  } catch (err) {
+    return new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);
   }
+}
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
