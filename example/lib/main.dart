@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:flutter_webview_plugin/src/webview_generic.dart';
+import 'package:rect_getter/rect_getter.dart';
 
 const kAndroidUserAgent =
     "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36";
@@ -14,6 +16,9 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  var keyContainer = GlobalKey();
+  var globalKey = RectGetter.createGlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -30,11 +35,50 @@ class MyApp extends StatelessWidget {
               ),
               withZoom: true,
               withLocalStorage: true,
+            ),
+        "/generic": (_) => new Container(
+              child: new Column(
+                children: <Widget>[
+                  new Container(
+                    height: 200.0,
+                    color: Colors.greenAccent,
+                  ),
+                  new RectGetter(
+                    key: globalKey,
+                    child: new Container(
+                      height: 300.0,
+                      child: new LayoutBuilder(builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        return new WebviewGeneric(
+                            url: selectedUrl,
+                            withZoom: true,
+                            withLocalStorage: true,
+                            height: constraints.maxHeight,
+                            width: constraints.maxWidth,
+                            rect: getRectForWebView(globalKey),
+                            keyGlobal: globalKey,);
+
+                      }),
+                      key: keyContainer,
+                    ),
+                  ),
+                  new Text("woooooooooooooooow"),
+                ],
+              ),
             )
       },
     );
   }
 }
+
+  Rect getRectForWebView(GlobalKey globalKey) {
+      try{
+        return RectGetter.getRectFromKey(globalKey);
+      }
+      catch(err){
+        return new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);
+      }
+  }
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -157,6 +201,12 @@ class _MyHomePageState extends State<MyHomePage> {
               Navigator.of(context).pushNamed("/widget");
             },
             child: new Text("Open widget webview"),
+          ),
+          new RaisedButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed("/generic");
+            },
+            child: new Text("Open widget webview Generic"),
           ),
           new Container(
             padding: const EdgeInsets.all(24.0),

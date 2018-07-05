@@ -18,3 +18,4 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
+  rect_getter: ^0.0.1
