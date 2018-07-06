@@ -1,11 +1,8 @@
 import 'dart:async';
+import 'base.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import 'base.dart';
-import 'package:rect_getter/rect_getter.dart';
-
 
 class WebviewGeneric extends StatefulWidget {
   final String url;
@@ -14,7 +11,6 @@ class WebviewGeneric extends StatefulWidget {
   final bool clearCookies;
   final bool enableAppScheme;
   final String userAgent;
-  final bool primary;
   final bool withZoom;
   final bool withLocalStorage;
   final bool withLocalUrl;
@@ -27,7 +23,6 @@ class WebviewGeneric extends StatefulWidget {
     this.clearCookies,
     this.enableAppScheme,
     this.userAgent,
-    this.primary: true,
     this.withZoom,
     this.withLocalStorage,
     this.withLocalUrl,
@@ -130,4 +125,41 @@ class _WebviewGenericState extends State<WebviewGeneric> {
     //
   }
 
+}
+
+class RectGetter extends StatefulWidget {
+  final GlobalKey<_RectGetterState> key;
+  final Widget child;
+
+  /// Use this static method to get child`s rectangle information when had a custom globalkey
+  static Rect getRectFromKey(GlobalKey<_RectGetterState> globalKey) {
+    var object = globalKey?.currentContext?.findRenderObject();
+    var translation = object?.getTransformTo(null)?.getTranslation();
+    var size = object?.semanticBounds?.size;
+
+    if (translation != null && size != null) {
+      return new Rect.fromLTWH(translation.x, translation.y, size.width, size.height);
+    } else {
+      return null;
+    }
+  }
+
+  /// create a custom globalkey , use this way to avoid type exception in dart2 .
+  static GlobalKey<_RectGetterState> createGlobalKey() {
+    return new GlobalKey<_RectGetterState>();
+  }
+  /// constructor with key passed , and then you can get child`s rect by using RectGetter.getRectFromKey(key)
+  RectGetter({@required this.key, @required this.child}) : super(key: key);
+
+  Rect getRect() {
+    return getRectFromKey(this.key);
+  }
+
+  @override
+  _RectGetterState createState() => new _RectGetterState();
+}
+
+class _RectGetterState extends State<RectGetter> {
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
