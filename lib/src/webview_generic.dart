@@ -18,18 +18,10 @@ class WebviewGeneric extends StatefulWidget {
   final bool withZoom;
   final bool withLocalStorage;
   final bool withLocalUrl;
-  final double height;
-  final double width;
-  final Rect rect;
-  final GlobalKey keyGlobal;
 
   WebviewGeneric({
     Key key,
     @required this.url,
-    @required this.width,
-    @required this.height,
-    this.rect,
-    this.keyGlobal,
     this.withJavascript,
     this.clearCache,
     this.clearCookies,
@@ -49,6 +41,7 @@ class _WebviewGenericState extends State<WebviewGeneric> {
   final webviewReference = new FlutterWebviewPlugin();
   Rect _rect;
   Timer _resizeTimer;
+  var globalKey = RectGetter.createGlobalKey();
 
   void initState() {
     super.initState();
@@ -64,39 +57,52 @@ class _WebviewGenericState extends State<WebviewGeneric> {
   @override
   Widget build(BuildContext context) {
 
-    if (_rect == null) {
-      _rect = _buildRect(context);
-      _resizeTimer?.cancel();
 
-      webviewReference.launch(widget.url,
-          withJavascript: widget.withJavascript,
-          clearCache: widget.clearCache,
-          clearCookies: widget.clearCookies,
-          enableAppScheme: widget.enableAppScheme,
-          userAgent: widget.userAgent,
-          rect: _rect,
-          withZoom: widget.withZoom,
-          withLocalStorage: widget.withLocalStorage,
-          withLocalUrl: widget.withLocalUrl);
-      _resizeTimer = new Timer(new Duration(milliseconds: 300), () {
-        _rect = _buildRect(context);
-        webviewReference.resize(_rect);
-      });
-    } else {
-      Rect rect = _buildRect(context);
-      if (_rect != rect) {
-        _rect = rect;
-        _resizeTimer?.cancel();
-        _resizeTimer = new Timer(new Duration(milliseconds: 300), () {
-          // avoid resizing to fast when build is called multiple time
-          _rect = _buildRect(context);
-          webviewReference.resize(_rect);
-        });
-      }
-    }
+    return new RectGetter(
+      key: globalKey,
+      child: new Container(
+        child: new LayoutBuilder(builder:
+            (BuildContext context, BoxConstraints constraints) {
+              if (_rect == null) {
+                _rect = _buildRect(context);
+                _resizeTimer?.cancel();
 
-    return  new Container(
-        child: new Center(child: new CircularProgressIndicator()));
+                webviewReference.launch(widget.url,
+                    withJavascript: widget.withJavascript,
+                    clearCache: widget.clearCache,
+                    clearCookies: widget.clearCookies,
+                    enableAppScheme: widget.enableAppScheme,
+                    userAgent: widget.userAgent,
+                    rect: _rect,
+                    withZoom: widget.withZoom,
+                    withLocalStorage: widget.withLocalStorage,
+                    withLocalUrl: widget.withLocalUrl);
+                _resizeTimer = new Timer(new Duration(milliseconds: 300), () {
+                  _rect = _buildRect(context);
+                  webviewReference.resize(_rect);
+                });
+              } else {
+                Rect rect = new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);//_buildRect(context);
+                if (_rect != rect) {
+                  _rect = rect;
+                  webviewReference.resize(_rect);
+                  _resizeTimer?.cancel();
+                  _resizeTimer = new Timer(new Duration(milliseconds: 100), () {
+                    // avoid resizing to fast when build is called multiple time
+                    _rect = _buildRect(context);
+                    webviewReference.resize(_rect);
+                  });
+                }
+              }
+
+              return new Container();
+        }),
+      ),
+    );
+
+
+
+
   }
 
   Rect _buildRect(BuildContext context) {
@@ -116,7 +122,7 @@ class _WebviewGenericState extends State<WebviewGeneric> {
     }
 */
     try{
-      return RectGetter.getRectFromKey(widget.keyGlobal);
+      return RectGetter.getRectFromKey(globalKey);
 
     }catch(err){
       return new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);

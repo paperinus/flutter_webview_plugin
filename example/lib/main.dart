@@ -4,21 +4,17 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter_webview_plugin/src/webview_generic.dart';
-import 'package:rect_getter/rect_getter.dart';
 
 const kAndroidUserAgent =
     "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36";
 
-String selectedUrl = "https://flutter.io";
+String selectedUrl = "https://google.com";
 
 void main() {
   runApp(new MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  var keyContainer = GlobalKey();
-  var globalKey = RectGetter.createGlobalKey();
-
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -36,30 +32,24 @@ class MyApp extends StatelessWidget {
               withZoom: true,
               withLocalStorage: true,
             ),
-        "/generic": (_) => new Container(
-              child: new Column(
+        "/generic": (_) => new Scaffold(
+              appBar: new AppBar(
+                title: new Text("Webview in un widget"),
+              ),
+              body: new Column(
                 children: <Widget>[
                   new Container(
-                    height: 200.0,
+                    height: 50.0,
                     color: Colors.greenAccent,
+                    child: new Center(
+                      child: new Text("sono un container"),
+                    ),
                   ),
-                  new RectGetter(
-                    key: globalKey,
-                    child: new Container(
-                      height: 300.0,
-                      child: new LayoutBuilder(builder:
-                          (BuildContext context, BoxConstraints constraints) {
-                        return new WebviewGeneric(
-                          url: selectedUrl,
-                          withZoom: true,
-                          withLocalStorage: true,
-                          height: constraints.maxHeight,
-                          width: constraints.maxWidth,
-                          rect: getRectForWebView(globalKey),
-                          keyGlobal: globalKey,
-                        );
-                      }),
-                      key: keyContainer,
+                  new Expanded(
+                    child: new WebviewGeneric(
+                      url: selectedUrl,
+                      withZoom: true,
+                      withLocalStorage: true,
                     ),
                   ),
                   new Text("woooooooooooooooow"),
@@ -68,14 +58,6 @@ class MyApp extends StatelessWidget {
             )
       },
     );
-  }
-}
-
-Rect getRectForWebView(GlobalKey globalKey) {
-  try {
-    return RectGetter.getRectFromKey(globalKey);
-  } catch (err) {
-    return new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);
   }
 }
 
