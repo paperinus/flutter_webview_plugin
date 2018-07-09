@@ -87,8 +87,8 @@ class _WebviewGenericState extends State<WebviewGeneric> {
                   webviewReference.resize(_rect);
                 });
               } else {
-                Rect rect = _buildRect(context);
-                if (_rect != rect) {
+                Rect rect = _buildRect(context); //new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);;
+                if (_rect != rect && rect != new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0)) {
                   _rect = rect;
                   webviewReference.resize(_rect);
                   _resizeTimer?.cancel();
