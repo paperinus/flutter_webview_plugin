@@ -50,6 +50,7 @@ class _WebviewGenericState extends State<WebviewGeneric> {
   Rect _rect;
   Timer _resizeTimer;
   var globalKey = new GlobalKey<_WebviewGenericState>();
+  bool isIOs;
 
   void initState() {
     super.initState();
@@ -64,7 +65,7 @@ class _WebviewGenericState extends State<WebviewGeneric> {
 
   @override
   Widget build(BuildContext context) {
-
+      isIOs = Theme.of(context).platform == TargetPlatform.iOS;
       return new Container(
         key: globalKey,
         child: new LayoutBuilder(builder:
@@ -88,7 +89,7 @@ class _WebviewGenericState extends State<WebviewGeneric> {
                 });
               } else {
                 Rect rect = _buildRect(context); //new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);;
-                if (_rect != rect && rect != new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0)) {
+                if (_rect != rect && (!isIOs || (isIOs && rect != new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0)))) {
                   _rect = rect;
                   webviewReference.resize(_rect);
                   _resizeTimer?.cancel();
