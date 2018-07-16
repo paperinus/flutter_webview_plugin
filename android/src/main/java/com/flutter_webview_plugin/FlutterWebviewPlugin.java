@@ -81,7 +81,7 @@ public class FlutterWebviewPlugin implements MethodCallHandler {
         boolean clearCache = call.argument("clearCache");
         boolean clearCookies = call.argument("clearCookies");
         boolean withZoom = call.argument("withZoom");
-        HashMap<String,String> cookies = new HashMap<String, String>();
+        HashMap<String,String> cookies = call.argument("cookies");
         boolean withLocalStorage = call.argument("withLocalStorage");
 
         if (webViewManager == null || webViewManager.closed == true) {

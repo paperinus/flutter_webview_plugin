@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'base.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'base.dart';
 
 class WebviewGeneric extends StatefulWidget {
   final String url;
@@ -14,6 +15,7 @@ class WebviewGeneric extends StatefulWidget {
   final bool withZoom;
   final bool withLocalStorage;
   final bool withLocalUrl;
+  final Map<String, String> cookies;
   final GlobalKey<_WebviewGenericState> key;
 
   WebviewGeneric({
@@ -27,6 +29,7 @@ class WebviewGeneric extends StatefulWidget {
     this.withZoom,
     this.withLocalStorage,
     this.withLocalUrl,
+    this.cookies
   }) : super(key: key);
 
   static Rect getRectFromKey(GlobalKey<_WebviewGenericState> globalKey) {
@@ -35,7 +38,8 @@ class WebviewGeneric extends StatefulWidget {
     var size = object?.semanticBounds?.size;
 
     if (translation != null && size != null) {
-      return new Rect.fromLTWH(translation.x, translation.y, size.width, size.height);
+      return new Rect.fromLTWH(
+          translation.x, translation.y, size.width, size.height);
     } else {
       return null;
     }
@@ -65,51 +69,56 @@ class _WebviewGenericState extends State<WebviewGeneric> {
 
   @override
   Widget build(BuildContext context) {
-      isIOs = Theme.of(context).platform == TargetPlatform.iOS;
-      return new Container(
-        key: globalKey,
-        child: new LayoutBuilder(builder:
-            (BuildContext context, BoxConstraints constraints) {
-              if (_rect == null) {
-                _rect = _buildRect(context);
-                _resizeTimer?.cancel();
-                webviewReference.launch(widget.url,
-                    withJavascript: widget.withJavascript,
-                    clearCache: widget.clearCache,
-                    clearCookies: widget.clearCookies,
-                    enableAppScheme: widget.enableAppScheme,
-                    userAgent: widget.userAgent,
-                    rect: _rect,
-                    withZoom: widget.withZoom,
-                    withLocalStorage: widget.withLocalStorage,
-                    withLocalUrl: widget.withLocalUrl);
-                _resizeTimer = new Timer(new Duration(milliseconds: 100), () {
-                  _rect = _buildRect(context);
-                  webviewReference.resize(_rect);
-                });
-              } else {
-                Rect rect = _buildRect(context); //new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);;
-                if (_rect != rect && (!isIOs || (isIOs && rect != new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0)))) {
-                  _rect = rect;
-                  webviewReference.resize(_rect);
-                  _resizeTimer?.cancel();
-                  _resizeTimer = new Timer(new Duration(milliseconds: 100), () {
-                    // avoid resizing to fast when build is called multiple time
-                    _rect = _buildRect(context);
-                    webviewReference.resize(_rect);
-                  });
-                }
-              }
-              return new Container();
-        }),
+    isIOs = Theme
+        .of(context)
+        .platform == TargetPlatform.iOS;
+    return new Container(
+      key: globalKey,
+      child: new LayoutBuilder(builder:
+          (BuildContext context, BoxConstraints constraints) {
+        if (_rect == null) {
+          _rect = _buildRect(context);
+          _resizeTimer?.cancel();
+          webviewReference.launch(widget.url,
+              withJavascript: widget.withJavascript,
+              clearCache: widget.clearCache,
+              clearCookies: widget.clearCookies,
+              enableAppScheme: widget.enableAppScheme,
+              userAgent: widget.userAgent,
+              rect: _rect,
+              withZoom: widget.withZoom,
+              withLocalStorage: widget.withLocalStorage,
+              withLocalUrl: widget.withLocalUrl,
+              cookies: widget.cookies
+          );
+          _resizeTimer = new Timer(new Duration(milliseconds: 100), () {
+            _rect = _buildRect(context);
+            webviewReference.resize(_rect);
+          });
+        } else {
+          Rect rect = _buildRect(
+              context); //new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);;
+          if (_rect != rect && (!isIOs ||
+              (isIOs && rect != new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0)))) {
+            _rect = rect;
+            webviewReference.resize(_rect);
+            _resizeTimer?.cancel();
+            _resizeTimer = new Timer(new Duration(milliseconds: 100), () {
+              // avoid resizing to fast when build is called multiple time
+              _rect = _buildRect(context);
+              webviewReference.resize(_rect);
+            });
+          }
+        }
+        return new Container();
+      }),
     );
   }
 
   Rect _buildRect(BuildContext context) {
-    try{
+    try {
       return WebviewGeneric.getRectFromKey(globalKey);
-
-    }catch(err){
+    } catch (err) {
       return new Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);
     }
     //

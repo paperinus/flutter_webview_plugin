@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter_webview_plugin/src/webview_generic.dart';
 
@@ -47,9 +46,13 @@ class MyApp extends StatelessWidget {
                   ),
                   new Expanded(
                     child: new WebviewGeneric(
-                      url: selectedUrl,
-                      withZoom: true,
-                      withLocalStorage: true,
+                        url: selectedUrl,
+                        withZoom: true,
+                        withLocalStorage: true,
+                  /*      cookies: {
+                          "https://www.google.com": "a=2"
+                        } //aggiunti i cookie, da testare
+                        */
                     ),
                   ),
                   new Text("woooooooooooooooow"),

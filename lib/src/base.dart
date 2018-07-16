@@ -78,15 +78,16 @@ class FlutterWebviewPlugin {
   ///     Allow local files on iOs > 9.0
   Future<Null> launch(String url,
       {bool withJavascript,
-      bool clearCache,
-      bool clearCookies,
-      bool hidden,
-      bool enableAppScheme,
-      Rect rect,
-      String userAgent,
-      bool withZoom,
-      bool withLocalStorage,
-      bool withLocalUrl}) async {
+        bool clearCache,
+        bool clearCookies,
+        bool hidden,
+        bool enableAppScheme,
+        Rect rect,
+        String userAgent,
+        bool withZoom,
+        bool withLocalStorage,
+        bool withLocalUrl,
+        Map<String, String> cookies}) async {
     Map<String, dynamic> args = {
       "url": url,
       "withJavascript": withJavascript ?? true,
@@ -97,7 +98,8 @@ class FlutterWebviewPlugin {
       "userAgent": userAgent,
       "withZoom": withZoom ?? false,
       "withLocalStorage": withLocalStorage ?? true,
-      "withLocalUrl": withLocalUrl ?? false
+      "withLocalUrl": withLocalUrl ?? false,
+      "cookies": cookies ?? null
     };
     if (rect != null) {
       args["rect"] = {
@@ -131,10 +133,10 @@ class FlutterWebviewPlugin {
   /// Navigates forward on the Webview.
   /// This is only available on Android for now.
   Future goForward() => _channel.invokeMethod("forward");
-  
+
   // Hides the webview
   Future hide() => _channel.invokeMethod("hide");
-  
+
   // Shows the webview
   Future show() => _channel.invokeMethod("show");
 
