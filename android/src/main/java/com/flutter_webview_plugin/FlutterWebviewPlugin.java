@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.view.Display;
 import android.widget.FrameLayout;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
@@ -80,6 +81,7 @@ public class FlutterWebviewPlugin implements MethodCallHandler {
         boolean clearCache = call.argument("clearCache");
         boolean clearCookies = call.argument("clearCookies");
         boolean withZoom = call.argument("withZoom");
+        HashMap<String,String> cookies = new HashMap<String, String>();
         boolean withLocalStorage = call.argument("withLocalStorage");
 
         if (webViewManager == null || webViewManager.closed == true) {
@@ -97,7 +99,8 @@ public class FlutterWebviewPlugin implements MethodCallHandler {
                 userAgent,
                 url,
                 withZoom,
-                withLocalStorage
+                withLocalStorage,
+                cookies
         );
         result.success(null);
     }
@@ -164,7 +167,8 @@ public class FlutterWebviewPlugin implements MethodCallHandler {
                     "",
                     url,
                     false,
-                    false
+                    false,
+                    null
             );
         }
     }
