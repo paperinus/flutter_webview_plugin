@@ -7,7 +7,7 @@ import 'package:flutter_webview_plugin/src/webview_generic.dart';
 const kAndroidUserAgent =
     "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36";
 
-String selectedUrl = "https://google.com";
+String selectedUrl = "https://www.google.com";
 
 void main() {
   runApp(new MyApp());
@@ -49,10 +49,10 @@ class MyApp extends StatelessWidget {
                         url: selectedUrl,
                         withZoom: true,
                         withLocalStorage: true,
-                  /*      cookies: {
-                          "https://www.google.com": "a=2"
-                        } //aggiunti i cookie, da testare
-                        */
+                        closeIfCantGoBack: false,
+                        cookies: [
+
+    ]
                     ),
                   ),
                   new Text("woooooooooooooooow"),

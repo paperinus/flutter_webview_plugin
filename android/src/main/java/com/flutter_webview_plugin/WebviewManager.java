@@ -13,11 +13,13 @@ import android.widget.FrameLayout;
 
 
 import java.util.HashMap;
+import java.util.ArrayList;
+
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import android.webkit.CookieManager;
-
+import android.util.Log;
 
 /**
  * Created by lejard_h on 20/12/2017.
@@ -26,6 +28,7 @@ import android.webkit.CookieManager;
 class WebviewManager {
 
     boolean closed = false;
+    boolean closeIfCantGoBack = true;
     WebView webView;
 
     WebviewManager(Activity activity) {
@@ -40,7 +43,8 @@ class WebviewManager {
                             if (webView.canGoBack()) {
                                 webView.goBack();
                             } else {
-                                close();
+                                if(closeIfCantGoBack)
+                                    close();
                             }
                             return true;
                     }
@@ -73,11 +77,14 @@ class WebviewManager {
 
     void openUrl(boolean withJavascript, boolean clearCache, boolean hidden, boolean clearCookies,
                  String userAgent, String url, boolean withZoom, boolean withLocalStorage,
-                 HashMap<String, String> cookies) {
+                 ArrayList<String> cookies,Boolean closeIfCantGoBack) {
+        if(closeIfCantGoBack != null)
+            this.closeIfCantGoBack = closeIfCantGoBack;
         webView.getSettings().setJavaScriptEnabled(withJavascript);
         webView.getSettings().setBuiltInZoomControls(withZoom);
         webView.getSettings().setSupportZoom(withZoom);
         webView.getSettings().setDomStorageEnabled(withLocalStorage);
+        webView.setWebContentsDebuggingEnabled(true);
 
         if (clearCache) {
             clearCache();
@@ -92,9 +99,11 @@ class WebviewManager {
         }
 
         if (cookies != null) {
-            for (String key :
-                    cookies.keySet()) {
-                CookieManager.getInstance().setCookie(key, cookies.get(key));
+            CookieManager.getInstance().setAcceptCookie(true);
+            for (String value : cookies) {
+                String[] parts = value.split(" ",2);
+                Log.i("COOKIES SET", " "+ parts[0]+ " "+parts[1]);
+                CookieManager.getInstance().setCookie(parts[0], parts[1]);
             }
         }
 

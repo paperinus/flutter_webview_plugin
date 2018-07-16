@@ -15,7 +15,8 @@ class WebviewGeneric extends StatefulWidget {
   final bool withZoom;
   final bool withLocalStorage;
   final bool withLocalUrl;
-  final Map<String, String> cookies;
+  final bool closeIfCantGoBack;
+  final List<String> cookies;
   final GlobalKey<_WebviewGenericState> key;
 
   WebviewGeneric({
@@ -29,7 +30,8 @@ class WebviewGeneric extends StatefulWidget {
     this.withZoom,
     this.withLocalStorage,
     this.withLocalUrl,
-    this.cookies
+    this.cookies,
+    this.closeIfCantGoBack
   }) : super(key: key);
 
   static Rect getRectFromKey(GlobalKey<_WebviewGenericState> globalKey) {
@@ -89,9 +91,10 @@ class _WebviewGenericState extends State<WebviewGeneric> {
               withZoom: widget.withZoom,
               withLocalStorage: widget.withLocalStorage,
               withLocalUrl: widget.withLocalUrl,
-              cookies: widget.cookies
+              cookies: widget.cookies,
+              closeIfCantGoBack:widget.closeIfCantGoBack
           );
-          _resizeTimer = new Timer(new Duration(milliseconds: 100), () {
+          _resizeTimer = new Timer(new Duration(milliseconds: 300), () {
             _rect = _buildRect(context);
             webviewReference.resize(_rect);
           });
@@ -103,7 +106,7 @@ class _WebviewGenericState extends State<WebviewGeneric> {
             _rect = rect;
             webviewReference.resize(_rect);
             _resizeTimer?.cancel();
-            _resizeTimer = new Timer(new Duration(milliseconds: 100), () {
+            _resizeTimer = new Timer(new Duration(milliseconds: 300), () {
               // avoid resizing to fast when build is called multiple time
               _rect = _buildRect(context);
               webviewReference.resize(_rect);

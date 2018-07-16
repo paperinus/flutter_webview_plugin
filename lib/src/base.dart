@@ -78,16 +78,17 @@ class FlutterWebviewPlugin {
   ///     Allow local files on iOs > 9.0
   Future<Null> launch(String url,
       {bool withJavascript,
-        bool clearCache,
-        bool clearCookies,
-        bool hidden,
-        bool enableAppScheme,
-        Rect rect,
-        String userAgent,
-        bool withZoom,
-        bool withLocalStorage,
-        bool withLocalUrl,
-        Map<String, String> cookies}) async {
+      bool clearCache,
+      bool clearCookies,
+      bool hidden,
+      bool enableAppScheme,
+      Rect rect,
+      String userAgent,
+      bool withZoom,
+      bool withLocalStorage,
+      bool withLocalUrl,
+      List<String> cookies,
+      bool closeIfCantGoBack}) async {
     Map<String, dynamic> args = {
       "url": url,
       "withJavascript": withJavascript ?? true,
@@ -99,7 +100,8 @@ class FlutterWebviewPlugin {
       "withZoom": withZoom ?? false,
       "withLocalStorage": withLocalStorage ?? true,
       "withLocalUrl": withLocalUrl ?? false,
-      "cookies": cookies ?? null
+      "cookies": cookies ?? null,
+      "closeIfCantGoBack": closeIfCantGoBack ?? null
     };
     if (rect != null) {
       args["rect"] = {
@@ -142,9 +144,7 @@ class FlutterWebviewPlugin {
 
   // Reload webview with a new url
   Future reloadUrl(String url) async {
-    Map<String, dynamic> args = {
-      "url": url
-    };
+    Map<String, dynamic> args = {"url": url};
     await _channel.invokeMethod("reloadUrl", args);
   }
 

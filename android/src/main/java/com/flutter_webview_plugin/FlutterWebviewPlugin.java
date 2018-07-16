@@ -14,6 +14,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.PluginRegistry;
+import java.util.ArrayList;
 
 /**
  * FlutterWebviewPlugin
@@ -81,7 +82,9 @@ public class FlutterWebviewPlugin implements MethodCallHandler {
         boolean clearCache = call.argument("clearCache");
         boolean clearCookies = call.argument("clearCookies");
         boolean withZoom = call.argument("withZoom");
-        HashMap<String,String> cookies = call.argument("cookies");
+        ArrayList<String> cookies = call.argument("cookies");
+        Boolean closeIfCantGoBack = call.argument("closeIfCantGoBack");
+
         boolean withLocalStorage = call.argument("withLocalStorage");
 
         if (webViewManager == null || webViewManager.closed == true) {
@@ -100,7 +103,8 @@ public class FlutterWebviewPlugin implements MethodCallHandler {
                 url,
                 withZoom,
                 withLocalStorage,
-                cookies
+                cookies,
+                closeIfCantGoBack
         );
         result.success(null);
     }
@@ -168,6 +172,7 @@ public class FlutterWebviewPlugin implements MethodCallHandler {
                     url,
                     false,
                     false,
+                    null,
                     null
             );
         }
